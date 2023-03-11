@@ -10,6 +10,7 @@ django = "*"
 numpy = "*"
 ipykernel = "*"
 bokeh = "*"
+openai = "*"
 
 [dev-packages]
 
