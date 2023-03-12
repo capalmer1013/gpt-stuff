@@ -25,7 +25,7 @@ def assist():
         }
     ]
 
-    with open(str(int(time.time()*100)) + ".json", "w") as f:
+    with open(f"{int(time.time()*100)}.json", "w") as f:
         try:
             while True:
                 print()
@@ -47,7 +47,7 @@ def assist():
                 console.print("CHAT >", style="color(6)")
                 console.print(completion.choices[0].message.content)
 
-        except InvalidRequestError as e:
+        except openai.error.InvalidRequestError as e:
             print(e)
         finally:
             json.dump(messages, f)
@@ -92,7 +92,7 @@ def python():
     if input("Save? (y/n): ").lower() == "y":
         with open(filename, "w") as f:
             f.write(completion.choices[0].message.content)
-        with open(filename.split(".")[0] +"_prompt.txt", "w") as f:
+        with open(f"{filename.split('.')[0]}_prompt.txt", "w") as f:
             f.write(description)
 
 
@@ -115,7 +115,7 @@ def summarize_github():
         for commit in commits:
             commit_messages.append(commit.commit.message)
     except Exception as e:
-        console.print("Sorry, This was not possible. Check the error below:\n", e)
+        console.print(f"Sorry, This was not possible. Check the error below:\n{e}")
         return
 
     messages.append({"role": "system", "content": f"Here are the commit messages for {github_username}: \n{commit_messages}"})
@@ -135,7 +135,7 @@ def addcommand():
     command = input("Enter command function name: ")
     description = input("Enter description: ")
 
-    current_script = open("aiassistant.py").read()
+    current_script = open(script_filename).read()
     messages = [{
         "role": "system",
         "content": f"you are adding to the ai assistant a function called {command} given the following python code and description"
@@ -155,7 +155,7 @@ def addcommand():
     if input("Save? (y/n): ").lower() == "y":
         with open(script_filename, "w") as f:
             f.write(completion.choices[0].message.content)
-        with open(script_filename.split(".")[0] + str(int(time.time()*100)) + "_prompt.txt", "w") as f:
+        with open(f"{script_filename.split('.')[0]}{int(time.time()*100)}_prompt.txt", "w") as f:
             f.write(description)
 
 
@@ -177,17 +177,14 @@ def refactor_code():
     completion = openai.ChatCompletion.create(
         messages=messages,
         model=OPENAI_MODEL, 
-        max_tokens=1024,
         temperature=0.7
         ) 
-    refactored_code = completion.choices[0].message.content
+    refactored_code = completion.choices[0].text
     console.print(refactored_code, style="green")
 
     if input("Save refactored code? (y/n): ").lower() == "y":
         with open(filename, "w") as f:
             f.write(refactored_code)
 
-
 if __name__ == "__main__":
     app()
-
