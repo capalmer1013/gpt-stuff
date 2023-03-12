@@ -177,18 +177,14 @@ def refactor_code():
     completion = openai.ChatCompletion.create(
         messages=messages,
         model=OPENAI_MODEL, 
-        max_tokens=1024, 
-        n=1,
-        stop=None,
+        max_tokens=1024,
         temperature=0.7
         ) 
-    refactored_code = completion.choices[0].text.strip()
-
-    if input("Print refactored code? (y/n): ").lower() == "y":
-        print(refactored_code)
+    refactored_code = completion.choices[0].message.content
+    console.print(refactored_code, style="green")
 
     if input("Save refactored code? (y/n): ").lower() == "y":
-        with open("refactored_" + filename, "w") as f:
+        with open(filename, "w") as f:
             f.write(refactored_code)
 
 
