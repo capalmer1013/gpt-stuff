@@ -6,12 +6,18 @@ import datetime
 import openai
 import typer
 from rich.console import Console
+from github import Github
+
 # https://rich.readthedocs.io/en/latest/style.html
 
 
 app = typer.Typer()
 console = Console()
 openai.api_key = os.environ["OPENAI_API_KEY"]
+OPENAI_MODEL = os.environ["OPENAI_MODEL"]
+GH_ACCESS_TOKEN=os.environ["GH_ACCESS_TOKEN"]
+
+g = Github(GH_ACCESS_TOKEN)
 
 
 @app.command()
@@ -19,18 +25,9 @@ def assist():
     messages = [
         {
             "role": "system",
-            # "content": "You are a helpful assistant."
-            # "content": "You are a story telling ai assistant."
-            # "content": "You are career advice assistant."
-            # "content": "You will ask me questions about what I'm currently working on to try and write a blog post"
             "content": "you are a helpful assistant ai to help me prepare for technical programming interviews. you will ask me whiteboard style questions and I will answer them with valid python code and you will say whether I had the right idea or not"
         }
     ]
-    # messages.extend(json.load(open("career-history.json")))
-    # messages.append({
-    #         "role": "user",
-    #         "content": "from now on you will interview me about things I have done or plan to do or am working on now to try to write a blog post about it."
-    #     })
 
     with open(str(int(time.time()*100)) + ".json", "w") as f:
         try:
@@ -42,7 +39,7 @@ def assist():
                 message = {"role": "user", "content": user_input}
                 messages.append(message)
                 completion = openai.ChatCompletion.create(
-                    model="gpt-3.5-turbo",
+                    model=OPENAI_MODEL,
                     messages=messages,
                     temperature=0.7,
                     )
@@ -71,8 +68,9 @@ def fact():
         "content": f'Todays datetime is {datetime.datetime.now()} tell me something interesting that has happened on this day in history, specifically in computer science.'
         }
     ]
-    completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)
+    completion = openai.ChatCompletion.create(model=OPENAI_MODEL, messages=messages)
     console.print(completion.choices[0].message.content, style="green")
+
 
 @app.command()
 def python():
@@ -92,7 +90,7 @@ def python():
         "content": f"you will output a python script called {filename} with no markdown formatting or anything else just valid python code, remember no formatting or additional insight. do not include any 3 tick marks in the output ```"
         }
     ]
-    completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)
+    completion = openai.ChatCompletion.create(model=OPENAI_MODEL, messages=messages)
     console.print(completion.choices[0].message.content, style="green")
 
     if input("Save? (y/n): ").lower() == "y":
@@ -100,6 +98,40 @@ def python():
             f.write(completion.choices[0].message.content.replace("```", ""))
         with open(filename.split(".")[0] +"_prompt.txt", "w") as f:
             f.write(description)
+
+
+@app.command()
+def summarize_github():
+    messages = [
+        {"role": "user",
+         "content": "You will use the Github library to fetch all of the commit log messages for a specific user for the past week."
+         },
+        {
+            "role": "user",
+            "content": "Then, pass those commits as separate messages to OpenAI to prompt it to write a summary about what has been accomplished in the past week."
+         }
+    ]
+    github_username = input(f"Github Username: ")
+    try:
+        user = g.get_user(github_username)
+        commits = user.get_commits(since=datetime.datetime.now() - datetime.timedelta(days=7))
+        commit_messages = []
+        for commit in commits:
+            commit_messages.append(commit.commit.message)
+    except Exception as e:
+        console.print("Sorry, This was not possible. Check the error below:\n", e)
+        return
+
+    messages.append({"role": "system", "content": f"Here are the commit messages for {github_username}: \n{commit_messages}"})
+    completion = openai.Completion.create(
+            engine=OPENAI_MODEL,
+            prompt='\n'.join(commit_messages),
+            max_tokens=512, temperature=0.7
+        )
+
+    summary = completion.choices[0].text
+    console.print(summary)
+
 
 @app.command()
 def addcommand():
@@ -117,18 +149,19 @@ def addcommand():
             "content": f"here is the current script \n```{current_script}```"
         },
         {
-        "role": "user",
-        "content": f"write python code to output the previous script and add the following function to it \nfunction name:{command} that does what the following description describes \ndescription: {description}, work through this step by step"
+            "role": "user",
+            "content": f"write python code to output the previous script and add the following function to it \nfunction name:{command} that does what the following description describes \ndescription: {description}, follow the instructions step by step"
         },
     ]
-    completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)
+    completion = openai.ChatCompletion.create(model=OPENAI_MODEL, messages=messages)
     console.print(completion.choices[0].message.content, style="green")
 
     if input("Save? (y/n): ").lower() == "y":
         with open(script_filename, "w") as f:
             f.write(completion.choices[0].message.content.replace("```", ""))
-        with open(script_filename + str(int(time.time()*100)) +"_prompt.txt", "w") as f:
+        with open(script_filename.split(".")[0] +"_prompt.txt", "w") as f:
             f.write(description)
+
 
 if __name__ == "__main__":
     app()

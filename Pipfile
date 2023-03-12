@@ -15,6 +15,7 @@ rich = "*"
 typer = {extras = ["all"], version = "*"}
 fastapi = "*"
 uvicorn = {extras = ["standard"], version = "*"}
+pygithub = "*"
 
 [dev-packages]
 
