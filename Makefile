@@ -3,3 +3,6 @@ run:
 
 stocks:
 	pipenv run jupyter-lab
+
+assist:
+	pipenv run python aiassistant.py 

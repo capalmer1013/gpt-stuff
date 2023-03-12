@@ -11,6 +11,7 @@ numpy = "*"
 ipykernel = "*"
 bokeh = "*"
 openai = "*"
+rich = "*"
 
 [dev-packages]
 
