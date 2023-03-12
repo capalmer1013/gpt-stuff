@@ -13,6 +13,8 @@ bokeh = "*"
 openai = "*"
 rich = "*"
 typer = {extras = ["all"], version = "*"}
+fastapi = "*"
+uvicorn = {extras = ["standard"], version = "*"}
 
 [dev-packages]
 

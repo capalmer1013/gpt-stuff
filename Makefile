@@ -9,3 +9,6 @@ assist:
 
 factoftheday:
 	pipenv run python aiassistant.py fact
+
+server:
+	pipenv run uvicorn server:app --reload

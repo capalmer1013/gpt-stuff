@@ -1,8 +1,9 @@
-python
+import random
+from typing import List
+
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
-from typing import List
 
 app = FastAPI()
 
