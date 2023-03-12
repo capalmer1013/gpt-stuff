@@ -97,7 +97,7 @@ def python():
 
     if input("Save? (y/n): ").lower() == "y":
         with open(filename, "w") as f:
-            f.write(completion.choices[0].message.content.replace("```", "")))
+            f.write(completion.choices[0].message.content.replace("```", ""))
         with open(filename.split(".")[0] +"_prompt.txt", "w") as f:
             f.write(description)
 
