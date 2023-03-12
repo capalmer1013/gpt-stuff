@@ -119,7 +119,7 @@ def summarize_github():
         return
 
     messages.append({"role": "system", "content": f"Here are the commit messages for {github_username}: \n{commit_messages}"})
-    completion = openai.Completion.create(
+    completion = openai.ChatCompletion.create(
             engine=OPENAI_MODEL,
             prompt='\n'.join(commit_messages),
             max_tokens=512, temperature=0.7
@@ -174,7 +174,14 @@ def refactor_code():
         },
     ]
 
-    completion = openai.Completion.create(model=OPENAI_MODEL, prompt=file_content, max_tokens=1024, n=1,stop=None,temperature=0.7) 
+    completion = openai.ChatCompletion.create(
+        messages=messages,
+        model=OPENAI_MODEL, 
+        max_tokens=1024, 
+        n=1,
+        stop=None,
+        temperature=0.7
+        ) 
     refactored_code = completion.choices[0].text.strip()
 
     if input("Print refactored code? (y/n): ").lower() == "y":
