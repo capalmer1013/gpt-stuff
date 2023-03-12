@@ -1,0 +1,1 @@
+write a command function that takes a filename as user input then stores that files text content as a variable then pass that file content to the openai api and ask it to refactor the sourcecode with a focus on functionalizing any repeated code

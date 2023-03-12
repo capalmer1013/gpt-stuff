@@ -8,15 +8,11 @@ import typer
 from rich.console import Console
 from github import Github
 
-# https://rich.readthedocs.io/en/latest/style.html
-
-
 app = typer.Typer()
 console = Console()
 openai.api_key = os.environ["OPENAI_API_KEY"]
 OPENAI_MODEL = os.environ["OPENAI_MODEL"]
-GH_ACCESS_TOKEN=os.environ["GH_ACCESS_TOKEN"]
-
+GH_ACCESS_TOKEN = os.environ["GH_ACCESS_TOKEN"]
 g = Github(GH_ACCESS_TOKEN)
 
 
@@ -87,7 +83,7 @@ def python():
         },
         {
         "role": "user",
-        "content": f"you will output a python script called {filename} with no markdown formatting or anything else just valid python code, remember no formatting or additional insight. do not include any 3 tick marks in the output ```"
+        "content": f"you will output a python script called {filename} with no markdown formatting or anything else just valid python code, remember no formatting or additional insight."
         }
     ]
     completion = openai.ChatCompletion.create(model=OPENAI_MODEL, messages=messages)
@@ -95,7 +91,7 @@ def python():
 
     if input("Save? (y/n): ").lower() == "y":
         with open(filename, "w") as f:
-            f.write(completion.choices[0].message.content.replace("```", ""))
+            f.write(completion.choices[0].message.content)
         with open(filename.split(".")[0] +"_prompt.txt", "w") as f:
             f.write(description)
 
@@ -158,10 +154,37 @@ def addcommand():
 
     if input("Save? (y/n): ").lower() == "y":
         with open(script_filename, "w") as f:
-            f.write(completion.choices[0].message.content.replace("```", ""))
-        with open(script_filename.split(".")[0] +"_prompt.txt", "w") as f:
+            f.write(completion.choices[0].message.content)
+        with open(script_filename.split(".")[0] + str(int(time.time()*100)) + "_prompt.txt", "w") as f:
             f.write(description)
+
+
+@app.command()
+def refactor_code():
+    filename = input("Enter file name: ")
+    with open(filename, "r") as f:
+        file_content = f.read()
+
+    messages = [
+        {"role": "system", 
+         "content": f"You will pass the contents of {filename} to the OpenAI API to refactor the code and focus on functionalizing repeated code."
+        },
+        {"role": "user",
+         "content": file_content
+        },
+    ]
+
+    completion = openai.Completion.create(model=OPENAI_MODEL, prompt=file_content, max_tokens=1024, n=1,stop=None,temperature=0.7) 
+    refactored_code = completion.choices[0].text.strip()
+
+    if input("Print refactored code? (y/n): ").lower() == "y":
+        print(refactored_code)
+
+    if input("Save refactored code? (y/n): ").lower() == "y":
+        with open("refactored_" + filename, "w") as f:
+            f.write(refactored_code)
 
 
 if __name__ == "__main__":
     app()
+
