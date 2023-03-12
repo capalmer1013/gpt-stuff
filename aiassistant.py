@@ -23,7 +23,7 @@ def assist():
             # "content": "You are a story telling ai assistant."
             # "content": "You are career advice assistant."
             # "content": "You will ask me questions about what I'm currently working on to try and write a blog post"
-            "content": "you are a helpful assistant ai to help me prepare for technical programming interviews. you will ask me whiteboard style questions and I will answer them with valid python code and you will say whether I had the right idea or not."
+            "content": "you are a helpful assistant ai to help me prepare for technical programming interviews. you will ask me whiteboard style questions and I will answer them with valid python code and you will say whether I had the right idea or not"
         }
     ]
     # messages.extend(json.load(open("career-history.json")))

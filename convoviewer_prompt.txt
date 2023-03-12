@@ -1,0 +1,1 @@
+write a small tkinter application that can parse the chatgpt json structure that is a list of dicts that have role and content keys. write a load function that is called when a load button is pressed that opens a filebrowser to choose a filename. then it displays the loaded json conversation in a resonable formatted way in a textbox. think through all of this step by step.
