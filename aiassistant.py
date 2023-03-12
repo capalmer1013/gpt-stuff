@@ -101,5 +101,34 @@ def python():
         with open(filename.split(".")[0] +"_prompt.txt", "w") as f:
             f.write(description)
 
+@app.command()
+def addcommand():
+    script_filename = "aiassistant.py"
+    command = input("Enter command function name: ")
+    description = input("Enter description: ")
+
+    current_script = open("aiassistant.py").read()
+    messages = [{
+        "role": "system",
+        "content": f"you are adding to the ai assistant a function called {command} given the following python code and description"
+        },
+        {
+            "role": "user",
+            "content": f"here is the current script \n```{current_script}```"
+        },
+        {
+        "role": "user",
+        "content": f"write python code to output the previous script and add the following function to it \nfunction name:{command} that does what the following description describes \ndescription: {description}, work through this step by step"
+        },
+    ]
+    completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=messages)
+    console.print(completion.choices[0].message.content, style="green")
+
+    if input("Save? (y/n): ").lower() == "y":
+        with open(script_filename, "w") as f:
+            f.write(completion.choices[0].message.content.replace("```", ""))
+        with open(script_filename + str(int(time.time()*100)) +"_prompt.txt", "w") as f:
+            f.write(description)
+
 if __name__ == "__main__":
     app()
