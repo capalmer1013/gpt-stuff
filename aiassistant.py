@@ -22,14 +22,15 @@ def assist():
             # "content": "You are a helpful assistant."
             # "content": "You are a story telling ai assistant."
             # "content": "You are career advice assistant."
-            "content": "You will ask me questions about what I'm currently working on to try and write a blog post"
+            # "content": "You will ask me questions about what I'm currently working on to try and write a blog post"
+            "content": "you are a helpful assistant ai that is meant to help organize my schedule."
         }
     ]
-    messages.extend(json.load(open("career-history.json")))
-    messages.append({
-            "role": "user",
-            "content": "from now on you will interview me about things I have done or plan to do or am working on now to try to write a blog post about it."
-        })
+    # messages.extend(json.load(open("career-history.json")))
+    # messages.append({
+    #         "role": "user",
+    #         "content": "from now on you will interview me about things I have done or plan to do or am working on now to try to write a blog post about it."
+    #     })
 
     with open(str(int(time.time()*100)) + ".json", "w") as f:
         try:
