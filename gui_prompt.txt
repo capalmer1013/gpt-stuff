@@ -1,0 +1,1 @@
+I would like to make a tkinter based gui application that has a text input a submit button and a textbox to hold the output logs. handle the submit button with a function called submit that currently just prints a message

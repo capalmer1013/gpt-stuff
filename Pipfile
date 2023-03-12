@@ -12,6 +12,7 @@ ipykernel = "*"
 bokeh = "*"
 openai = "*"
 rich = "*"
+typer = {extras = ["all"], version = "*"}
 
 [dev-packages]
 
