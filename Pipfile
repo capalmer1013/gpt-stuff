@@ -16,6 +16,8 @@ typer = {extras = ["all"], version = "*"}
 fastapi = "*"
 uvicorn = {extras = ["standard"], version = "*"}
 pygithub = "*"
+yfinance = "*"
+yahooquery = "*"
 
 [dev-packages]
 
